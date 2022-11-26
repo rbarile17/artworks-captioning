@@ -1,2 +1,6 @@
-['remote "origin"']
+[core]
+    remote = gdrive
+['remote "dagshub"']
     url = https://dagshub.com/rbarile17/artworks-captioning.dvc
+['remote "gdrive"']
+    url = gdrive://1sVBTaKcpt1ajMDnEtXJnQ1gsEfc0tkQi
