@@ -10,10 +10,14 @@ from detectron2.modeling import build_model
 from detectron2.data import DatasetCatalog
 from detectron2.data import DatasetMapper, build_detection_test_loader
 
-from data.datasets_loaders import load_artgraph, load_artpedia, load_semart, load_ola
-from data.datasets_loaders import URLMapper
-
 import h5py
+import os
+from pathlib import Path
+import yaml
+from ..data.datasets_loaders import datasets_loading_functions
+
+DATA = Path('./data')
+PROCESSED_DATA = DATA / 'processed'
 
 def get_object_features(model, batch):
     images = model.preprocess_image(batch)  # don't forget to preprocess
@@ -33,32 +37,55 @@ def get_object_features(model, batch):
 
     return feats
 
-cfg = get_cfg()
-cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml"))
-cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml")
+def main(params=None):
+    if params is None:
+        params_path = Path("params.yaml")
+        with open(params_path, "r", encoding="utf-8") as params_file:
+            try:
+                params = yaml.safe_load(params_file)
+                params = params["build_features"]
+            except yaml.YAMLError as exc:
+                print(exc)
 
-# param
-cfg.MODEL.WEIGHTS = '../models/model_final_styleflow.pth'
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6
-model = build_model(cfg)
+    # Load model
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(f"COCO-Detection/{params['model_name']}.yaml"))
 
-# param
-DetectionCheckpointer(model).load(cfg.MODEL.WEIGHTS)
-DatasetCatalog.register("ola", load_ola)
+    if params['is_pretrained']:
+        cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(f"COCO-Detection/{params['weights']}.yaml")
+    else:
+        cfg.MODEL.WEIGHTS = params['weights']
 
-dataset = DatasetCatalog.get("ola")
-dataloader = build_detection_test_loader(dataset, mapper=DatasetMapper(cfg))
+    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.6
+    model = build_model(cfg)
+    DetectionCheckpointer(model).load(cfg.MODEL.WEIGHTS)
 
-model.eval()
-with torch.no_grad():
-    with tqdm(desc=f'Progress', unit='iteration', total=len(dataloader)) as pbar:
-        with h5py.File('../../data/features/ola/ola_detections_styleflow.hdf5', 'w') as h5_file:
-            for batch in tqdm(dataloader):
-                feats = get_object_features(model, batch)
-                h5_features = h5_file.create_dataset(
-                    f"{batch[0]['file_name'].split('/')[-1].split('.')[0]}_features", 
-                    shape=feats.shape, 
-                    dtype=np.float32)
-                for j in range(0, feats.shape[0]):
-                    h5_features[j] = feats[j].cpu()
-                pbar.update()
+    # Load dataset
+    if params['dataset'] not in ['coco_2017_train', 'coco_2017_val', 'coco_2017_test']:
+        DatasetCatalog.register(params['dataset'], datasets_loading_functions[params['dataset']])
+
+    dataset = DatasetCatalog.get(params['dataset'])
+    dataloader = build_detection_test_loader(dataset, mapper=DatasetMapper(cfg))
+
+    # Build features
+    model.eval()
+    with torch.no_grad():
+        os.makedirs(PROCESSED_DATA / params['dataset'], exist_ok=True)
+        with tqdm(desc=f'Progress', unit='iteration', total=len(dataloader)) as pbar:
+            with h5py.File(
+                f"{PROCESSED_DATA}/{params['dataset']}/{params['dataset']}_detections_{params['model_name']}.hdf5", 
+                'w'
+            ) as h5_file:
+                
+                for batch in tqdm(dataloader):
+                    feats = get_object_features(model, batch)
+                    h5_features = h5_file.create_dataset(
+                        f"{batch[0]['file_name'].split('/')[-1].split('.')[0]}_features", 
+                        shape=feats.shape, 
+                        dtype=np.float32)
+                    for j in range(0, feats.shape[0]):
+                        h5_features[j] = feats[j].cpu()
+                    pbar.update()
+
+if __name__ == "__main__":
+    main()

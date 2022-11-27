@@ -1,0 +1,6 @@
+build_features:
+  model_name: 'faster_rcnn_R_101_FPN_3x'
+  is_pretrained: True
+  weights: 'faster_rcnn_R_101_FPN_3x'
+  dataset: 'coco_2017_train'
+

@@ -159,3 +159,10 @@ def load_ola():
             ola_dicts.append(image)
 
     return ola_dicts
+
+datasets_loading_functions = {
+    'ola': load_ola,
+    'artgraph': load_artgraph,
+    'artpedia': load_artpedia,
+    'semart': load_semart,
+}
