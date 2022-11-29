@@ -12,12 +12,9 @@ from detectron2.data import DatasetMapper, build_detection_test_loader
 
 import h5py
 import os
-from pathlib import Path
-import yaml
 from ..data.datasets_loaders import datasets_loading_functions
-
-DATA = Path('./data')
-PROCESSED_DATA = DATA / 'processed'
+from ..data import PROCESSED_DATA_PATH
+from .. import load_params
 
 def get_object_features(model, batch):
     images = model.preprocess_image(batch)  # don't forget to preprocess
@@ -39,13 +36,7 @@ def get_object_features(model, batch):
 
 def main(params=None):
     if params is None:
-        params_path = Path("params.yaml")
-        with open(params_path, "r", encoding="utf-8") as params_file:
-            try:
-                params = yaml.safe_load(params_file)
-                params = params["build_features"]
-            except yaml.YAMLError as exc:
-                print(exc)
+        params = load_params()
 
     # Load model
     cfg = get_cfg()
@@ -70,10 +61,10 @@ def main(params=None):
     # Build features
     model.eval()
     with torch.no_grad():
-        os.makedirs(PROCESSED_DATA / params['dataset'], exist_ok=True)
+        os.makedirs(PROCESSED_DATA_PATH / params['dataset'], exist_ok=True)
         with tqdm(desc=f'Progress', unit='iteration', total=len(dataloader)) as pbar:
             with h5py.File(
-                f"{PROCESSED_DATA}/{params['dataset']}\
+                f"{PROCESSED_DATA_PATH}/{params['dataset']}\
                     /{params['dataset']}_detections_{params['model_name']}.hdf5", 
                 'w'
             ) as h5_file:
