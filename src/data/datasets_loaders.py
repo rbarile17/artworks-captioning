@@ -26,7 +26,6 @@ def coco_with_virtual_paintings(virtual_paintings_dir, train=True):
     return dataset
 
 # Style transfer target dataset
-
 def load_artgraph():
     artgraph = pd.read_csv(ARTGRAPH_PATH / 'artgraph.csv')
 
@@ -39,7 +38,6 @@ def load_artgraph():
     return artgraph
 
 # Evaluation datasets
-
 def load_artpedia():
     with open(ARTPEDIA_PATH / '/artpedia.json', 'r') as file:
         artpedia = json.load(file)
@@ -74,7 +72,6 @@ def load_ola():
     ola['file_name'] = ARTGRAPH_PATH / 'images' / ola['file_name']
 
 # map dataset name to loading function
-    
 datasets_loading_functions = {
     # style transfer target dataset
     'artgraph': load_artgraph,
