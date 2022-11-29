@@ -1,5 +1,4 @@
 from neo4j import GraphDatabase
-import json
 import pandas as pd
 from . import ARTGRAPH_PATH
 
@@ -36,7 +35,11 @@ def main():
     conn = Neo4jConnection(uri="bolt://localhost:7687", user="neo4j", pwd="artgraph")
     artworks = conn.query('MATCH (n:Artwork) RETURN n', db='neo4j')
     artworks = [artwork['n'] for artwork in artworks]
+
     artworks_df = pd.DataFrame(artworks)
+
+    # rename name column to file_name
+    artworks_df = artworks_df.rename(columns={'name': 'file_name'})
     artworks_df.to_csv(ARTGRAPH_PATH / 'artgraph.csv', index=False)
 
 if __name__ == "__main__":
