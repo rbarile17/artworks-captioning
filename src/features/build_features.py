@@ -73,7 +73,8 @@ def main(params=None):
         os.makedirs(PROCESSED_DATA / params['dataset'], exist_ok=True)
         with tqdm(desc=f'Progress', unit='iteration', total=len(dataloader)) as pbar:
             with h5py.File(
-                f"{PROCESSED_DATA}/{params['dataset']}/{params['dataset']}_detections_{params['model_name']}.hdf5", 
+                f"{PROCESSED_DATA}/{params['dataset']}\
+                    /{params['dataset']}_detections_{params['model_name']}.hdf5", 
                 'w'
             ) as h5_file:
                 
