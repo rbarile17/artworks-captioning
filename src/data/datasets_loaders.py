@@ -45,17 +45,7 @@ def load_artpedia():
     return list(artpedia.values())
 
 def load_semart():
-    semart = pd.concat([
-        pd.read_csv(SEMART_PATH / '/semart_train.csv', delimiter='\t', encoding='Cp1252'),
-        pd.read_csv(SEMART_PATH / '/semart_val.csv', delimiter='\t', encoding='Cp1252'),
-        pd.read_csv(SEMART_PATH / '/semart_test.csv', delimiter='\t', encoding='Cp1252')
-    ], axis=0)
-
-    semart = semart.rename(columns={
-        'IMAGE_FILE': 'file_name', 
-        'DESCRIPTION': 'description',
-        'TITLE': 'title'
-    })
+    semart = pd.read_csv(SEMART_PATH / 'semart.csv', delimiter='\t', encoding='Cp1252')
 
     # add semart path to file_name
     semart['file_name'] = SEMART_PATH / 'images' / semart['file_name']
