@@ -33,9 +33,9 @@ class Neo4jConnection:
                 session.close()
         return response
     
-def main():
+def main(params=None):
     if params is None:
-        params = load_params()
+        params = load_params()["retrieve_artgraph_artworks"]
 
     conn = Neo4jConnection(
         uri=params["neo4j_uri"], 

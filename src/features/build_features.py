@@ -36,7 +36,7 @@ def get_object_features(model, batch):
 
 def main(params=None):
     if params is None:
-        params = load_params()
+        params = load_params()["object_features_extraction"]
 
     # Load model
     cfg = get_cfg()

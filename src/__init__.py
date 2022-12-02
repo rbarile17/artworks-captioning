@@ -7,6 +7,7 @@ def load_params():
     with open(params_path, "r", encoding="utf-8") as params_file:
         try:
             params = yaml.safe_load(params_file)
-            params = params["build_features"]
         except yaml.YAMLError as exc:
             print(exc)
+
+    return params
