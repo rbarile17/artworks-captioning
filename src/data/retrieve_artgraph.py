@@ -1,6 +1,7 @@
 from neo4j import GraphDatabase
 import pandas as pd
 from . import ARTGRAPH_PATH
+from .. import load_params
 
 class Neo4jConnection:
     def __init__(self, uri, user, pwd):
@@ -22,7 +23,8 @@ class Neo4jConnection:
         session = None
         response = None
         try: 
-            session = self.__driver.session(database=db) if db is not None else self.__driver.session() 
+            session = self.__driver.session(database=db) \
+                if db is not None else self.__driver.session() 
             response = list(session.run(query))
         except Exception as e:
             print("Query failed:", e)
@@ -32,8 +34,16 @@ class Neo4jConnection:
         return response
     
 def main():
-    conn = Neo4jConnection(uri="bolt://localhost:7687", user="neo4j", pwd="artgraph")
-    artworks = conn.query('MATCH (n:Artwork) RETURN n', db='neo4j')
+    if params is None:
+        params = load_params()
+
+    conn = Neo4jConnection(
+        uri=params["neo4j_uri"], 
+        user=params["neo4j_user"], 
+        pwd=params["neo4j_pwd"]
+    )
+
+    artworks = conn.query('MATCH (n:Artwork) RETURN n', db=params["neo4j_db"])
     artworks = [artwork['n'] for artwork in artworks]
 
     artworks_df = pd.DataFrame(artworks)
