@@ -1,4 +1,4 @@
-retrieve_artgraph:
+retrieve_artgraph_artworks:
   neo4j_uri: "bolt://localhost:7687"
   neo4j_user: "neo4j"
   neo4j_password: "artgraph"
@@ -8,4 +8,8 @@ build_features:
   is_pretrained: True
   weights: 'faster_rcnn_R_101_FPN_3x'
   dataset: 'coco_2017_train'
-
+style_transfer_target_filter:
+  evaluation_datasets:
+    - ola
+    - semart
+    - artpedia
