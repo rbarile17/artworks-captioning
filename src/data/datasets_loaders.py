@@ -39,27 +39,34 @@ def load_artgraph():
 
 # Evaluation datasets
 def load_artpedia():
-    with open(ARTPEDIA_PATH / '/artpedia.json', 'r') as file:
-        artpedia = json.load(file)
+    with open(ARTPEDIA_PATH / 'artpedia.json', 'r') as file:
+        artpedia = list(json.load(file).values())
 
-    return list(artpedia.values())
+    # join visual sentences field in a single string called description
+    for image in artpedia:
+        image['description'] = ' '.join(image['visual_sentences'])
+
+    return artpedia
 
 def load_semart():
-    semart = pd.read_csv(SEMART_PATH / 'semart.csv', delimiter='\t', encoding='Cp1252')
+    semart = pd.read_csv(SEMART_PATH / 'semart.csv')
 
     # add semart path to file_name
     semart['file_name'] = SEMART_PATH / 'images' / semart['file_name']
 
-    semart = semart.loc[:, ['file_name', 'description']].to_dict('records')
+    semart = semart.loc[:, ['file_name', 'title', 'description']].to_dict('records')
 
     return semart
 
 def load_ola():
     ola = pd.read_csv(OLA_PATH / 'ola_filtered.csv')
-    ola = ola.to_dict('records')
 
     # add artgraph path to file_name
     ola['file_name'] = ARTGRAPH_PATH / 'images' / ola['file_name']
+
+    ola = ola.to_dict('records')
+
+    return ola
 
 # map dataset name to loading function
 datasets_loading_functions = {

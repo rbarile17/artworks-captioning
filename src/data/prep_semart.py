@@ -11,7 +11,13 @@ def main():
     semart = semart.rename(columns={
         'IMAGE_FILE': 'file_name', 
         'DESCRIPTION': 'description',
-        'TITLE': 'title'
+        'TITLE': 'title',
+        'AUTHOR': 'author',
+        'DATE': 'date',
+        'TECHNIQUE': 'technique',
+        'TYPE': 'type',
+        'SCHOOL': 'school',
+        'TIMEFRAME': 'timeframe'
     })
 
     semart.to_csv(SEMART_PATH / 'semart.csv', index=False)
