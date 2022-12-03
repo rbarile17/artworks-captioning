@@ -1,9 +1,9 @@
 retrieve_artgraph_artworks:
   neo4j_uri: "bolt://localhost:7687"
   neo4j_user: "neo4j"
-  neo4j_password: "artgraph"
+  neo4j_pwd: "artgraph"
   neo4j_db: "neo4j"
-build_features:
+object_features_extraction:
   model_name: 'faster_rcnn_R_101_FPN_3x'
   is_pretrained: True
   weights: 'faster_rcnn_R_101_FPN_3x'
