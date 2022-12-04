@@ -11,10 +11,13 @@ ARTGRAPH_PATH = RAW_DATA_PATH / 'artgraph'
 SEMART_PATH = RAW_DATA_PATH / 'semart'
 ARTPEDIA_PATH = RAW_DATA_PATH / 'artpedia'
 OLA_PATH = RAW_DATA_PATH / 'ola'
+COCO_TRAIN2017 = RAW_DATA_PATH / 'coco/train2017'
 
 dataset_paths = {
     'artgraph': ARTGRAPH_PATH,
+    'artgraph_images': ARTGRAPH_PATH / 'images',
     'semart': SEMART_PATH,
     'artpedia': ARTPEDIA_PATH,
-    'ola': OLA_PATH
+    'ola': OLA_PATH,
+    'coco_train2017': COCO_TRAIN2017,
 }

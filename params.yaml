@@ -13,3 +13,7 @@ style_transfer_target_filter:
     - ola
     - semart
     - artpedia
+train_AdaIn:
+  content_dataset: coco_train2017
+  style_dataset: artgraph_images
+  n_thread: 6
