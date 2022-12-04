@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-from . import ARTGRAPH_PATH
+from . import dataset_paths, ARTGRAPH_PATH
 from .datasets_loaders import datasets_loading_functions
 from .. import load_params
 
@@ -15,32 +15,41 @@ def main(params = None):
 
     artworks_df = pd.read_csv(ARTGRAPH_PATH / 'artgraph.csv')
 
-    titles_in_artgraph = []
     for evaluation_dataset in params['evaluation_datasets']:
         # load evauation dataset using corresponding loading function
         dataset = pd.DataFrame(datasets_loading_functions[evaluation_dataset]())
-
-        # remove dupicates from artworks df
-        artworks_unique_titles_df = artworks_df.drop_duplicates(subset=['title'], keep=False).copy()
-
-        # get all titles from evaluation dataset
-        dataset_titles = dataset['title'].tolist()
-
         
+        # switch to lowercase all titles in dataset
+        dataset['lowercase_title'] = dataset['title'].str.lower()
 
-        artworks_unique_titles_df['is_in_eval_dataset'] = artworks_unique_titles_df['title'] \
-            .progress_map(lambda x: 
-                [dataset_title for dataset_title in dataset_titles if dataset_title in x])
+        # get all lowercase titles in a list from artworks dataset
+        artworks_titles = artworks_df['title'].str.lower().tolist()
+
+        dataset['artworks_dataset_matches'] = dataset['lowercase_title'] \
+            .progress_map(lambda x: [artwork_title for artwork_title in artworks_titles if artwork_title == x])
         
-        print(artworks_unique_titles_df)
-        break
-        artworks_unique_titles_df = artworks_unique_titles_df[
-            artworks_unique_titles_df['is_in_eval_dataset'] == True]
-        
-        print(len(artworks_unique_titles_df))
-        artworks_unique_titles_df['pairs'] = list(
-            zip(artworks_unique_titles_df['title'], artworks_unique_titles_df['file_name']))
-        titles_in_artgraph += artworks_unique_titles_df['pairs'].tolist()
+        dataset['artworks_dataset_matches_number'] = dataset['artworks_dataset_matches'].map(lambda x: len(x))
+
+        # the artworks in this filter will not be used as targets for style transfer
+        train_filter = dataset[dataset['artworks_dataset_matches_number'] == 1]
+
+        """
+        The artworks in this filter have generic titles such as: self-portait, crucifixion and so on.
+        Several entries in artgraph have this kind of title (e.g. more than 700 self-portaits).
+        We don't know which is the artgraph element that corresponds to the title in the evaluation dataset 
+        so we have to remove all of them from the style transfer target dataset,
+        (e.g. the semart dataset contains an artwork named crucifixion, 
+        to avoid overlap we need to remove all crucifixions from artgraph)
+        but this would lead to lose lots of potentially important artworks. 
+        So we decided to keep them in artgraph but to filter them out in the evaluation phase.
+        """
+        eval_filter = dataset[dataset['artworks_dataset_matches_number'] > 1]
+
+        # save to csv title column of dataset
+        train_filter['title'].to_csv(ARTGRAPH_PATH / f'titles_in_{evaluation_dataset}.csv', index=False)
+
+        dataset_path = dataset_paths[evaluation_dataset]
+        eval_filter['title'].to_csv(dataset_path / f'titles_in_artgraph.csv', index=False)
 
 if __name__ == "__main__":
     main()

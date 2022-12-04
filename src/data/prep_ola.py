@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 
 from . import OLA_PATH, ARTGRAPH_PATH
@@ -15,7 +14,6 @@ def main():
     
     # join ola with artgraph
     ola = ola.merge(pd.read_csv(ARTGRAPH_PATH / 'artgraph.csv'), on='file_name')
-    print(len(ola))
 
     # remove artgraph columns except for title
     ola = ola.loc[:, ['file_name', 'description', 'title']]
