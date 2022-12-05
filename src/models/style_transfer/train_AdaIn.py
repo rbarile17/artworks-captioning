@@ -7,8 +7,6 @@ from pathlib import Path
 from ... import load_params
 from ...data import dataset_paths
 
-import yaml
-
 def main(params=None):
     """
     Main method.
@@ -24,6 +22,9 @@ def main(params=None):
     args['--style_dir'] = dataset_paths[params.pop('style_dataset')]
 
     # optional parameters with default in the original script
+    if 'style_filter' in params:
+        args['--style_filter'] = dataset_paths[params.pop('style_filter')]
+
     for param, value in params.items():
         args[f"--{param}"] = value
     
@@ -32,7 +33,6 @@ def main(params=None):
         args["--vgg"] = "./models/AdaIn/input/vgg_normalised.pth"
 
     # start training
-    # train_script = os.path.join("./src/models/style_transfer/pytorch-AdaIN", "train.py")
     ADAIN_PATH = Path(os.environ["ADAIN_PATH"])
     train_script = ADAIN_PATH / "train.py"
     command = f"python {train_script}"

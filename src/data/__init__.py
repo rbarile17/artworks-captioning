@@ -16,6 +16,7 @@ COCO_TRAIN2017 = RAW_DATA_PATH / 'coco/train2017'
 dataset_paths = {
     'artgraph': ARTGRAPH_PATH,
     'artgraph_images': ARTGRAPH_PATH / 'images',
+    'artgraph_filter': ARTGRAPH_PATH / 'filter.csv',
     'semart': SEMART_PATH,
     'artpedia': ARTPEDIA_PATH,
     'ola': OLA_PATH,

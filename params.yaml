@@ -16,4 +16,5 @@ style_transfer_target_filter:
 train_AdaIn:
   content_dataset: coco_train2017
   style_dataset: artgraph_images
+  style_filter: artgraph_filter
   n_thread: 6
