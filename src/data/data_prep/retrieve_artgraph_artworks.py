@@ -1,7 +1,7 @@
 from neo4j import GraphDatabase
 import pandas as pd
-from . import ARTGRAPH_PATH
-from .. import load_params
+from .. import ARTGRAPH_PATH
+from ... import load_params
 
 class Neo4jConnection:
     def __init__(self, uri, user, pwd):

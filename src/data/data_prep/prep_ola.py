@@ -1,6 +1,6 @@
 import pandas as pd
 
-from . import OLA_PATH, ARTGRAPH_PATH
+from .. import OLA_PATH, ARTGRAPH_PATH
 
 def main():
     ola = pd.read_csv(OLA_PATH / 'ola.csv')

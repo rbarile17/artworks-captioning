@@ -2,8 +2,8 @@ import json
 import pandas as pd
 
 from . import dataset_paths, ARTGRAPH_PATH
-from .datasets_loaders import datasets_loading_functions
-from .. import load_params
+from ..data_utils.datasets_loaders import datasets_loading_functions
+from ... import load_params
 
 from tqdm import tqdm
 

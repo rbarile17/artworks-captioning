@@ -5,7 +5,7 @@ Wrapper module used to launch the training script.
 import os
 from pathlib import Path
 from ... import load_params
-from ...data import dataset_paths
+from .. import dataset_paths
 
 def main(params=None):
     """
