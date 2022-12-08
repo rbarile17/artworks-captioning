@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 
 from . import dataset_paths, ARTGRAPH_PATH
