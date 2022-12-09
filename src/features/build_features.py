@@ -12,7 +12,6 @@ from detectron2.data import DatasetMapper, build_detection_test_loader
 
 import h5py
 import os
-from ..data.datasets_loaders import datasets_loading_functions
 from ..data import PROCESSED_DATA_PATH
 from .. import load_params
 
@@ -52,9 +51,6 @@ def main(params=None):
     DetectionCheckpointer(model).load(cfg.MODEL.WEIGHTS)
 
     # Load dataset
-    if params['dataset'] not in ['coco_2017_train', 'coco_2017_val', 'coco_2017_test']:
-        DatasetCatalog.register(params['dataset'], datasets_loading_functions[params['dataset']])
-
     dataset = DatasetCatalog.get(params['dataset'])
     dataloader = build_detection_test_loader(dataset, mapper=DatasetMapper(cfg))
 
@@ -64,9 +60,7 @@ def main(params=None):
         os.makedirs(PROCESSED_DATA_PATH / params['dataset'], exist_ok=True)
         with tqdm(desc=f'Progress', unit='iteration', total=len(dataloader)) as pbar:
             with h5py.File(
-                f"{PROCESSED_DATA_PATH}/{params['dataset']}\
-                    /{params['dataset']}_detections_{params['model_name']}.hdf5", 
-                'w'
+                PROCESSED_DATA_PATH / f"{params['dataset']}_detections_{params['model_name']}.hdf5", 'w'
             ) as h5_file:
                 
                 for batch in tqdm(dataloader):
