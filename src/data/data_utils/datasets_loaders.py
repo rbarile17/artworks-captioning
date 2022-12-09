@@ -78,3 +78,6 @@ datasets_loading_functions = {
     'artpedia': load_artpedia,
     'semart': load_semart,
 }
+
+for dataset in datasets_loading_functions.keys():
+    DatasetCatalog.register(dataset, datasets_loading_functions[dataset])
