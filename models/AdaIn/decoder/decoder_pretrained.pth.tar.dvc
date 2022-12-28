@@ -1,0 +1,4 @@
+outs:
+- md5: efd868ad07c3fdfcb51466f6f4fc9ed6
+  size: 14023494
+  path: decoder_pretrained.pth.tar

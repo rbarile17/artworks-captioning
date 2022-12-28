@@ -1,2 +1,2 @@
-/AdaIn/input
-/AdaIn/decoder_pretrained.pth.tar
+/AdaIn/encoder/vgg_normalised_pretrained.pth
+/AdaIn/decoder/decoder_pretrained.pth.tar
