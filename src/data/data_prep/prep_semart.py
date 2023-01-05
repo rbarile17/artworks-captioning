@@ -1,5 +1,5 @@
 import pandas as pd
-from . import SEMART_PATH
+from .. import SEMART_PATH
 
 def main():
     semart = pd.concat([

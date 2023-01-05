@@ -1,9 +1,8 @@
-import json
 import pandas as pd
 
 from . import dataset_paths, ARTGRAPH_PATH
-from .datasets_loaders import datasets_loading_functions
-from .. import load_params
+from ..data_utils.datasets_loaders import datasets_loading_functions
+from ... import load_params
 
 from tqdm import tqdm
 
@@ -15,6 +14,7 @@ def main(params = None):
 
     artworks_df = pd.read_csv(ARTGRAPH_PATH / 'artgraph.csv')
 
+    train_filters = []
     for evaluation_dataset in params['evaluation_datasets']:
         # load evauation dataset using corresponding loading function
         dataset = pd.DataFrame(datasets_loading_functions[evaluation_dataset]())
@@ -45,11 +45,17 @@ def main(params = None):
         """
         eval_filter = dataset[dataset['artworks_dataset_matches_number'] > 1]
 
-        # save to csv title column of dataset
-        train_filter['title'].to_csv(ARTGRAPH_PATH / f'titles_in_{evaluation_dataset}.csv', index=False)
+        train_filters.append(train_filter['title'])
 
         dataset_path = dataset_paths[evaluation_dataset]
         eval_filter['title'].to_csv(dataset_path / f'titles_in_artgraph.csv', index=False)
 
+    train_filter = pd.concat(train_filters)
+        
+    # add artworks_df columns to train_filter
+    train_filter = train_filter.to_frame().merge(artworks_df, on='title')
+    train_filter = train_filter.drop_duplicates(subset=['file_name'])
+
+    train_filter.file_name.to_csv(ARTGRAPH_PATH / 'filter.csv', index=False, header=False)
 if __name__ == "__main__":
     main()

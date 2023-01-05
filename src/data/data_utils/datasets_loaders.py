@@ -5,7 +5,7 @@ import pandas as pd
 from os import listdir
 from detectron2.data import DatasetCatalog
 
-from . import ARTGRAPH_PATH, SEMART_PATH, ARTPEDIA_PATH, OLA_PATH  
+from .. import ARTGRAPH_PATH, SEMART_PATH, ARTPEDIA_PATH, OLA_PATH  
 
 def coco_with_virtual_paintings(virtual_paintings_dir, train=True):
     if train:

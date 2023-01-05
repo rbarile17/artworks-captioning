@@ -1,0 +1,4 @@
+outs:
+- md5: bb6e9a222ef3630ff734596f29ad8d20
+  size: 80102481
+  path: vgg_normalised_pretrained.pth
